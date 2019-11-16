@@ -37,13 +37,15 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func loadData() {
-        number = 20
+        number = 5
         let query = PFQuery(className: "Posts")  //Get query Store data reload the table view
         query.includeKey("author")
         query.limit = number
+        query.order(byDescending: "createdAt")
 
         query.findObjectsInBackground { (posts, error) in
             if posts != nil {
+                self.posts.removeAll()
                 self.posts = posts!
                 self.tableView.reloadData()
             }
@@ -54,10 +56,12 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     func loadMoreData() {
         let query = PFQuery(className: "Posts")  //Get query Store data reload the table view
         query.includeKey("author")
-        query.limit = number + 10
-        
+        number = number + 5
+        query.limit = number
+        query.order(byDescending: "createdAt")
         query.findObjectsInBackground { (posts, error) in
             if posts != nil {
+                self.posts.removeAll()
                 self.posts = posts!
                 self.tableView.reloadData()
             }
