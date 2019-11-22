@@ -24,7 +24,6 @@ class CameraViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBAction func onSubmit(_ sender: Any) {
         //create a PFObject and save in Parse
         let post = PFObject(className: "Posts")
-        
         post["caption"] = commentField.text!
         post["author"] = PFUser.current()!
         
@@ -46,7 +45,7 @@ class CameraViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     @IBAction func onCameraButton(_ sender: Any) {
         
-    let picker = UIImagePickerController()
+        let picker = UIImagePickerController()
         picker.delegate = self
         picker.allowsEditing = true
         

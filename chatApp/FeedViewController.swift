@@ -43,6 +43,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         commentBar.inputTextView.placeholder = "Add a comment..."
         commentBar.sendButton.title = "Post"
         commentBar.delegate = self
+        
     }
     
     //method to hide commentBar when keyboard is hidden
