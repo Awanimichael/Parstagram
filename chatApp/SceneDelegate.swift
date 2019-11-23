@@ -22,8 +22,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //Persistent Login. Check if there is a current user
         if PFUser.current() != nil {
             let main = UIStoryboard(name: "Main", bundle: nil)
-            let feedNavigationController = main.instantiateViewController(withIdentifier: "FeedNavigationController")
-            window?.rootViewController = feedNavigationController
+//            let feedNavigationController = main.instantiateViewController(withIdentifier: "FeedNavigationController")
+            let tabBarNavigationController = main.instantiateViewController(withIdentifier: "TabBarNavigationController")
+            window?.rootViewController = tabBarNavigationController
         }
     }
 

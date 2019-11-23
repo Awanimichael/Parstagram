@@ -43,6 +43,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         commentBar.inputTextView.placeholder = "Add a comment..."
         commentBar.sendButton.title = "Post"
         commentBar.delegate = self
+        
     }
     
     //method to hide commentBar when keyboard is hidden
@@ -111,7 +112,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func loadMoreData() {
         let query = PFQuery(className: "Posts")  //Get query Store data reload the table view
-        query.includeKey("author")
+        query.includeKeys(["author", "comments", "comments.author"])
         number = number + 5
         query.limit = number
         query.order(byDescending: "createdAt")
@@ -147,20 +148,28 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         let post = posts[indexPath.section]
         let comments = (post["comments"] as? [PFObject]) ?? []
         
-        
+
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell") as! PostCell
             let user = post["author"] as! PFUser
             cell.usernameLabel.text = user.username
-            
             cell.captionLabel.text = post["caption"] as? String
+            
             
             let imageFile = post["iamge"] as! PFFileObject
             let urlString = imageFile.url!
             let url = URL(string: urlString)!
-            print(url)
-            
             cell.photoView.af_setImage(withURL: url)
+            
+            //get profile picture
+            let imgFile = user["profilePicture"] as? PFFileObject
+            if imgFile != nil{
+                let urlStr = imgFile?.url!
+                let url2 = URL(string: urlStr!)
+                cell.profilePhotoView.af_setImage(withURL: url2!)
+            } else {
+                cell.profilePhotoView.image = UIImage(systemName: "person")
+            }
             return cell
             
         } else if indexPath.row <= comments.count {
@@ -171,6 +180,16 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
             let user = comment["author"] as! PFUser
             cell.nameLabel.text = user.username
             
+            //get profile picture for comments
+            let imgFile = user["profilePicture"] as? PFFileObject
+            if imgFile != nil{
+                let urlStr = imgFile?.url!
+                let url2 = URL(string: urlStr!)
+                cell.commentImageView.af_setImage(withURL: url2!)
+            } else {
+                cell.commentImageView.image = UIImage(systemName: "person")
+            }
+            
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "AddCommentCell")!
@@ -178,6 +197,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
             return cell
         }
     }
+ 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //Run when a user click of each cell
