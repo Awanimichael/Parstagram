@@ -112,7 +112,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func loadMoreData() {
         let query = PFQuery(className: "Posts")  //Get query Store data reload the table view
-        query.includeKey("author")
+        query.includeKeys(["author", "comments", "comments.author"])
         number = number + 5
         query.limit = number
         query.order(byDescending: "createdAt")
@@ -170,9 +170,6 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
             } else {
                 cell.profilePhotoView.image = UIImage(systemName: "person")
             }
-            
-
-            
             return cell
             
         } else if indexPath.row <= comments.count {
@@ -182,6 +179,16 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             let user = comment["author"] as! PFUser
             cell.nameLabel.text = user.username
+            
+            //get profile picture for comments
+            let imgFile = user["profilePicture"] as? PFFileObject
+            if imgFile != nil{
+                let urlStr = imgFile?.url!
+                let url2 = URL(string: urlStr!)
+                cell.commentImageView.af_setImage(withURL: url2!)
+            } else {
+                cell.commentImageView.image = UIImage(systemName: "person")
+            }
             
             return cell
         } else {
